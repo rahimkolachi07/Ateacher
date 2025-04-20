@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Teacher Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 30px 0 10px;
+      color: #333;
+    }
+
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      padding: 20px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      width: 250px;
+      text-align: center;
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>👨‍🏫 AI Teacher Dashboard</h1>
+
+  <div class="dashboard">
+    
+    <!-- Top Row: 3 Cards -->
+    <div class="row">
+      <div class="card" onclick="openExplainer()">
+        <h3>📖 Explaining Box</h3>
+        <p>Explain any topic using AI</p>
+      </div>
+      <div class="card" onclick="openPPTMaker()">
+        <h3>📊 PPT Developer</h3>
+        <p>Create stunning PPTs automatically</p>
+      </div>
+      <div class="card" onclick="openDiscussion()">
+        <h3>💬 Discussion Box</h3>
+        <p>Group chat or AI-based discussion</p>
+      </div>
+    </div>
+
+    <!-- Bottom Row: 2 Cards -->
+    <div class="row">
+      <div class="card" onclick="openQuizBuilder()">
+        <h3>📝 Quiz Builder</h3>
+        <p>Auto-generate quiz questions</p>
+      </div>
+      <div class="card" onclick="openLessonPlanner()">
+        <h3>📅 Lesson Planner</h3>
+        <p>Generate full lesson plans</p>
+      </div>
+    </div>
+    
+  </div>
+
+  <script>
+    function openExplainer() {
+      window.location.href = "{% url 'explainer.html' %}";
+    }
+    function openPPTMaker() {
+      window.location.href = "{% url 'ppt_maker' %}";
+    }
+    function openDiscussion() {
+      window.location.href = "{% url 'discussion' %}";
+    }
+    function openQuizBuilder() {
+      window.location.href = "{% url 'quiz_builder' %}";
+    }
+    function openLessonPlanner() {
+      window.location.href = "{% url 'lesson_planner' %}";
+    }
+  </script>
+
+</body>
+</html>

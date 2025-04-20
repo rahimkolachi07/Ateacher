@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Teacher</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f1f2f6, #dfe4ea);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      animation: fadeInDown 1.5s ease;
+    }
+
+    header img {
+      width: 80px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      color: #2f3542;
+      animation: typing 3s steps(30, end), blink 0.8s step-end infinite;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid #57606f;
+      max-width: 100%;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      width: 90%;
+      max-width: 1200px;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      animation: fadeInUp 1.5s ease;
+    }
+
+    .container img {
+      width: 300px;
+      max-width: 100%;
+      border-radius: 16px;
+    }
+
+    .content {
+      max-width: 600px;
+      margin-left: 30px;
+    }
+
+    .content p {
+      font-size: 1.1rem;
+      color: #2f3542;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: #3742fa;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #2f3542;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        text-align: center;
+      }
+      .content {
+        margin-left: 0;
+        margin-top: 20px;
+      }
+    }
+
+    /* Chatbot Box */
+    .chatbot {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      height: 450px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 999;
+    }
+
+    .chatbot-header {
+      background: #3742fa;
+      color: white;
+      padding: 15px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chatbot-body {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .chatbot-footer {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    .chatbot-footer input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .chatbot-footer button {
+      background: #3742fa;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .chat-message {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 12px;
+      max-width: 80%;
+    }
+
+    .user {
+      background: #dfe4ea;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: #f1f2f6;
+      align-self: flex-start;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="{% static 'logo.png' %}" alt="AI Teacher Logo" style="width: 300px; height: auto;" />
+    <h1>Welcome to Your AI Teacher</h1>
+  </header>
+
+  <div class="container">
+    <img src="{% static 'body.gif' %}" alt="AI Teacher Illustration" />
+    <div class="content">
+      <p>Your personal smart educator that explains, presents, summarizes, and guides your learning journey with AI power.</p>
+      <a href="{% static 'dashboard.html' %}" class="btn">Start Learning</a>
+    </div>
+  </div>
+
+  <!-- Chatbot -->
+  <div class="chatbot" id="chatbot">
+    <div class="chatbot-header">
+      AI Teacher Chat
+      <span style="cursor:pointer;" onclick="closeChat()">✖</span>
+    </div>
+    <div class="chatbot-body" id="chatBody"></div>
+    <div class="chatbot-footer">
+      <input type="text" id="userInput" placeholder="Type your question..." onkeydown="if(event.key==='Enter') sendMessage()" />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function openChat() {
+      document.getElementById("chatbot").style.display = "flex";
+    }
+
+    function closeChat() {
+      document.getElementById("chatbot").style.display = "none";
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const msg = input.value.trim();
+      if (msg === "") return;
+
+      appendMessage("user", msg);
+      input.value = "";
+
+      setTimeout(() => {
+        botReply(msg);
+      }, 600);
+    }
+
+    function appendMessage(sender, text) {
+      const msgDiv = document.createElement("div");
+      msgDiv.classList.add("chat-message", sender);
+      msgDiv.innerText = text;
+      document.getElementById("chatBody").appendChild(msgDiv);
+      msgDiv.scrollIntoView();
+    }
+
+    function botReply(userMsg) {
+      let reply = "I'm here to help! Ask me anything about your subject.";
+      if (userMsg.toLowerCase().includes("math")) reply = "Let's learn math together! What topic are you struggling with?";
+      else if (userMsg.toLowerCase().includes("physics")) reply = "Physics is fascinating! Ask me your question.";
+      else if (userMsg.toLowerCase().includes("hello")) reply = "Hello there! Ready to start learning?";
+      appendMessage("bot", reply);
+    }
+  </script>
+</body>
+</html>
