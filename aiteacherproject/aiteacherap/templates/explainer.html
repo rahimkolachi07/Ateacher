@@ -1,201 +1,139 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Explaining Box</title>
+  <title>🎤 Voice Bot Assistant</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #eef1f5;
+      background: linear-gradient(to right, #74ebd5, #ACB6E5);
       margin: 0;
       padding: 0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 20px;
+      animation: fadeIn 1s ease-in;
     }
 
     h1 {
       text-align: center;
-      padding: 30px 0;
       color: #333;
-    }
-
-    .chat-container {
-      width: 90%;
-      max-width: 800px;
-      margin: auto;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
 
     .chat-box {
       height: 400px;
-      overflow-y: scroll;
+      overflow-y: auto;
       border: 1px solid #ccc;
       padding: 15px;
       border-radius: 10px;
-      margin-bottom: 15px;
-      background: #fafafa;
+      background: #f9f9f9;
+      margin-bottom: 20px;
     }
 
     .message {
-      margin-bottom: 15px;
+      margin: 10px 0;
+      animation: fadeIn 0.4s ease;
     }
 
-    .message.user {
-      text-align: right;
-      color: #007bff;
-    }
+    .message.user { text-align: right; color: #007bff; }
+    .message.bot { text-align: left; color: #333; }
 
-    .message.bot {
-      text-align: left;
-      color: #333;
-    }
-
-    .controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    textarea {
-      flex-grow: 1;
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      resize: none;
-    }
-
-    button {
-      padding: 10px 15px;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #007bff;
-      color: white;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-
-    input[type="file"] {
-      margin-top: 10px;
-    }
-
-    .btn-back {
-      margin: 20px auto;
-      display: block;
-      padding: 10px 20px;
-      background-color: #28a745;
-      color: white;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-
-    .btn-back:hover {
-      background-color: #218838;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-
-<h1>📖 Explaining Box</h1>
-
-<div class="chat-container">
-  <div class="chat-box" id="chatBox"></div>
-
-  <div class="controls">
-    <textarea id="userInput" rows="2" placeholder="Type your question..."></textarea>
-    <button onclick="sendMessage()">Send</button>
-    <button onclick="startVoice()">🎤</button>
-    <button onclick="stopVoice()">⛔</button>
+  <div class="container">
+    <h1>🤖 Live AI Teacher Talk</h1>
+    <div class="chat-box" id="chatBox"></div>
   </div>
-
-  <input type="file" accept="image/*,application/pdf,audio/*" onchange="uploadFile(this)">
-
-</div>
-
-<a href="{% url 'dashboard' %}" class="btn-back">Back to Dashboard</a>
 
 <script>
   const chatBox = document.getElementById('chatBox');
 
-  function addMessage(text, sender = 'bot') {
+  // Automatically start listening when the page loads
+  window.onload = () => startVoiceRecognition();
+
+  function addMessage(message, sender) {
     const div = document.createElement('div');
     div.className = `message ${sender}`;
-    div.innerText = text;
+    div.innerText = message;
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    if (sender === 'bot') {
-      speakText(text);
-    }
+    if (sender === 'bot') speak(message);
   }
 
-  function sendMessage() {
-    const input = document.getElementById('userInput');
-    const text = input.value.trim();
-    if (text === '') return;
-
-    addMessage(text, 'user');
-    input.value = '';
-
-    // Simulate AI response
-    setTimeout(() => {
-      addMessage("AI says: " + text);
-    }, 1000);
+  function speak(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    speechSynthesis.speak(utterance);
   }
 
-  function uploadFile(input) {
-    const file = input.files[0];
-    if (file) {
-      addMessage(`Uploaded: ${file.name}`, 'user');
-
-      // Simulate AI processing
-      setTimeout(() => {
-        addMessage(`AI has processed the file: ${file.name}`);
-      }, 1500);
-    }
-  }
-
-  // Voice recognition setup
-  let recognition;
-  function startVoice() {
-    if (!('webkitSpeechRecognition' in window)) {
-      alert("Voice recognition not supported.");
+  function startVoiceRecognition() {
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+      alert("Your browser doesn't support Web Audio.");
       return;
     }
 
-    recognition = new webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      const mediaRecorder = new MediaRecorder(stream);
+      let chunks = [];
 
-    recognition.onresult = function(event) {
-      const voiceText = event.results[0][0].transcript;
-      document.getElementById('userInput').value = voiceText;
-      sendMessage();
-    };
+      mediaRecorder.start();
 
-    recognition.start();
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(chunks, { type: 'audio/wav' });
+        sendToServer(audioBlob);
+        chunks = [];
+      };
+
+      setInterval(() => {
+        mediaRecorder.stop();
+        mediaRecorder.start(); // restart recording every 5 seconds
+      }, 5000);
+    });
   }
 
-  function stopVoice() {
-    if (recognition) recognition.stop();
+  // Function to get the CSRF token from the document
+  function getCSRFToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    return csrfToken;
   }
 
-  // Text to Speech
-  function speakText(text) {
-    if ('speechSynthesis' in window) {
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      speechSynthesis.speak(utter);
-    }
+  function sendToServer(blob) {
+    addMessage("🎙️ Listening...", "user");
+
+    const formData = new FormData();
+    formData.append('audio', blob, 'recording.wav');
+
+    fetch('/process-audio/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCSRFToken()  // Add CSRF token to the header
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      addMessage(data.response, 'bot');
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      addMessage("Sorry, couldn't process your voice.", 'bot');
+    });
   }
 </script>
 
