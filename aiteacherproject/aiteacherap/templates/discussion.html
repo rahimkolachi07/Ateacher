@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discussion Room</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f5f9;
+      padding: 0;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 20px 0;
+      background: #3498db;
+      color: white;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+    }
+
+    .button {
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .button:hover {
+      background-color: #1f5e86;
+    }
+
+    .post {
+      background: #eef6fb;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      animation: fadeUp 0.4s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>💬 Discussion Room</h1>
+
+<div class="container">
+  <textarea id="discussionInput" placeholder="What's your opinion or question?"></textarea>
+  <button class="button" onclick="postDiscussion()">Post</button>
+
+  <div id="discussionBox"></div>
+</div>
+
+<script>
+  function postDiscussion() {
+    const text = document.getElementById('discussionInput').value.trim();
+    if (!text) return alert("Please write something to post.");
+
+    const box = document.getElementById('discussionBox');
+    const post = document.createElement('div');
+    post.className = 'post';
+    post.innerText = text;
+    box.prepend(post);
+
+    document.getElementById('discussionInput').value = '';
+  }
+</script>
+
+</body>
+</html>

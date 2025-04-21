@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -16,6 +15,7 @@
       text-align: center;
       padding: 30px 0 10px;
       color: #333;
+      animation: fadeSlideDown 1s ease-out;
     }
 
     .dashboard {
@@ -24,6 +24,7 @@
       align-items: center;
       gap: 40px;
       padding: 20px;
+      animation: fadeInUp 1.5s ease-out;
     }
 
     .row {
@@ -42,7 +43,15 @@
       text-align: center;
       transition: transform 0.3s;
       cursor: pointer;
+      opacity: 0;
+      animation: fadeInCard 1s forwards;
     }
+
+    .card:nth-child(1) { animation-delay: 0.2s; }
+    .card:nth-child(2) { animation-delay: 0.4s; }
+    .card:nth-child(3) { animation-delay: 0.6s; }
+    .card:nth-child(4) { animation-delay: 0.8s; }
+    .card:nth-child(5) { animation-delay: 1s; }
 
     .card:hover {
       transform: translateY(-5px);
@@ -52,6 +61,22 @@
       margin-bottom: 10px;
       color: #333;
     }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeSlideDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInCard {
+      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(30px); }
+    }
   </style>
 </head>
 <body>
@@ -59,7 +84,6 @@
   <h1>👨‍🏫 AI Teacher Dashboard</h1>
 
   <div class="dashboard">
-    
     <!-- Top Row: 3 Cards -->
     <div class="row">
       <div class="card" onclick="openExplainer()">
@@ -87,12 +111,11 @@
         <p>Generate full lesson plans</p>
       </div>
     </div>
-    
   </div>
 
   <script>
     function openExplainer() {
-      window.location.href = "{% url 'explainer.html' %}";
+      window.location.href = "{% url 'explainer' %}";
     }
     function openPPTMaker() {
       window.location.href = "{% url 'ppt_maker' %}";

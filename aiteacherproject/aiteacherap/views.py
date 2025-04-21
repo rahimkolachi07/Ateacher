@@ -4,6 +4,9 @@ from aiteacherap import *
 def home(request):
     return render(request, 'index.html')
 
+def dashboard(request):
+    return render(request, 'dashboard.html')
+
 def explainer(request):
     return render(request, 'explainer.html')
 

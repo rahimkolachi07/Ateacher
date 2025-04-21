@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PPT Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f6fc;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 30px 0;
+      color: #222;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .topic-input {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1em;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .button {
+      padding: 12px 20px;
+      font-size: 1em;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .slide-box {
+      margin-top: 30px;
+      background: #f7f9fb;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 150px;
+      font-size: 1.2em;
+      text-align: center;
+      display: none;
+    }
+
+    .controls {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .btn-back {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .btn-back:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📊 AI-Powered PPT Generator</h1>
+
+<div class="container">
+  <input type="text" id="topicInput" class="topic-input" placeholder="Enter your topic (e.g., Climate Change)">
+  <button class="button" onclick="generateSlides()">Generate Slides</button>
+
+  <div id="slideBox" class="slide-box"></div>
+
+  <div class="controls">
+    <button class="button" onclick="startPresentation()">🎬 Start Auto Presentation</button>
+    <button class="button" onclick="downloadPPT()">⬇️ Download PPT</button>
+  </div>
+</div>
+
+<a href="{% url 'dashboard' %}" class="btn-back">Back to Dashboard</a>
+
+<script>
+  const slides = [];
+  let currentSlide = 0;
+  let intervalId = null;
+
+  function generateSlides() {
+    const topic = document.getElementById('topicInput').value.trim();
+    if (!topic) {
+      alert("Please enter a topic.");
+      return;
+    }
+
+    // Dummy AI slide content (simulate)
+    slides.length = 0;
+    slides.push(`Title Slide: ${topic}`);
+    slides.push(`Introduction to ${topic}`);
+    slides.push(`Importance of ${topic}`);
+    slides.push(`Challenges in ${topic}`);
+    slides.push(`Solutions & Recommendations`);
+    slides.push(`Conclusion`);
+
+    currentSlide = 0;
+    document.getElementById('slideBox').style.display = 'block';
+    showSlide(currentSlide);
+  }
+
+  function showSlide(index) {
+    if (index >= slides.length) return;
+
+    const slideContent = slides[index];
+    document.getElementById('slideBox').innerText = slideContent;
+
+    speakText(slideContent);
+  }
+
+  function startPresentation() {
+    if (slides.length === 0) {
+      alert("Please generate slides first.");
+      return;
+    }
+
+    currentSlide = 0;
+    showSlide(currentSlide);
+
+    if (intervalId) clearInterval(intervalId);
+
+    intervalId = setInterval(() => {
+      currentSlide++;
+      if (currentSlide < slides.length) {
+        showSlide(currentSlide);
+      } else {
+        clearInterval(intervalId);
+      }
+    }, 5000); // 5 seconds per slide
+  }
+
+  function speakText(text) {
+    if ('speechSynthesis' in window) {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'en-US';
+      speechSynthesis.speak(utter);
+    }
+  }
+
+  function downloadPPT() {
+    alert("📥 PPT download is simulated. Backend integration required for real PPT generation.");
+    // You can later use backend with ReportLab / python-pptx and send a file from Django
+  }
+</script>
+
+</body>
+</html>

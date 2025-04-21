@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lesson Planner</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fcfcfc;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 30px;
+      background-color: #5dbea3;
+      color: white;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    .button {
+      padding: 12px;
+      background-color: #5dbea3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .button:hover {
+      background-color: #48a18b;
+    }
+
+    .lesson-card {
+      background: #f4fffa;
+      border: 1px solid #cfe7de;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 15px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📘 Lesson Planner</h1>
+
+<div class="container">
+  <input type="text" id="lessonTopic" placeholder="Lesson Topic">
+  <input type="text" id="objectives" placeholder="Learning Objectives">
+  <textarea id="materials" placeholder="Materials Required"></textarea>
+  <textarea id="procedure" placeholder="Lesson Procedure / Activities"></textarea>
+  <button class="button" onclick="addLesson()">📌 Add Lesson</button>
+
+  <div id="lessonList"></div>
+</div>
+
+<script>
+  function addLesson() {
+    const topic = document.getElementById('lessonTopic').value.trim();
+    const obj = document.getElementById('objectives').value.trim();
+    const mat = document.getElementById('materials').value.trim();
+    const proc = document.getElementById('procedure').value.trim();
+
+    if (!topic || !obj || !mat || !proc) {
+      alert("Fill all fields!");
+      return;
+    }
+
+    const lessonCard = document.createElement('div');
+    lessonCard.className = 'lesson-card';
+    lessonCard.innerHTML = `
+      <h3>${topic}</h3>
+      <p><strong>Objectives:</strong> ${obj}</p>
+      <p><strong>Materials:</strong> ${mat}</p>
+      <p><strong>Procedure:</strong> ${proc}</p>
+    `;
+
+    document.getElementById('lessonList').appendChild(lessonCard);
+
+    document.getElementById('lessonTopic').value = '';
+    document.getElementById('objectives').value = '';
+    document.getElementById('materials').value = '';
+    document.getElementById('procedure').value = '';
+  }
+</script>
+
+</body>
+</html>
